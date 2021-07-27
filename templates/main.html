@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>QA service</title>
+        <meta name="description" content="QA service">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@900&family=Ubuntu&display=swap" rel="stylesheet">
+        <script type="text/javascript">
+        let flag = undefined;
+        let chars = undefined;
+
+        window.onload = () => {
+           flag = false;       // 더블 클릭 체크
+        }
+
+    function double_submit_check() {
+        if (flag) {
+            console.log("double");
+            return true;
+        }
+        else {
+            flag = true;
+
+            return false;
+        }
+    }
+        function send_req() {
+        if (double_submit_check()){
+            return ;
+        }
+        document.getElementById('result').innerText="Loading..."
+        document.getElementById('result').value="Loading..."
+        let sentence = document.getElementById("input").value;
+        let context = document.getElementById("cont").value;
+        if (sentence == '') {
+            document.getElementById('warning').innerText = 'Please fill text!';
+            flag = false;
+            return ;
+        }
+        if (context == '') {
+            document.getElementById('warning').innerText = 'Please fill context!';
+            flag = false;
+            return ;
+        }
+
+        const formData = new FormData();
+        const url = "/generate";
+        let start = 0;
+
+        formData.append('question', sentence);
+        formData.append('context',context)
+        fetch (url, { method: 'POST', body: formData, })
+        .then(response => {
+            console.log(response);
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                flag = false;
+            }
+        }).catch(err => {
+            flag = false;
+            document.getElementById('warning').innerText = err;
+        }).then(data => {
+            const result = document.getElementById('result');
+            const answer = data;
+            console.log(data);
+            if(data['score']<0.3){
+                result.innerText = "No correct answers found in this context."
+                result.value="No correct answers found in this context."
+            }
+            else{
+            result.innerText = data['answer'];
+            result.value= data['answer'];
+            }
+            flag = false;
+        }).catch(err => {
+            flag = false;
+            document.getElementById('warning').innerText = err;
+        });
+        }
+
+        function openTextFile(number) {
+        const xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+       document.getElementById('cont').innerText = xhttp.responseText;
+       document.getElementById('cont').value = xhttp.responseText;
+        }
+        };
+        xhttp.open("GET", `/static/file${number}.txt`, true);
+        xhttp.send();
+        }
+
+        function questionClick(value){
+            document.getElementById('input').innerText = value
+            document.getElementById('input').value = value
+        }
+        function clearAll() {
+            document.getElementById('input').innerText="";
+            document.getElementById('cont').innerText="";
+            document.getElementById('input').value="";
+            document.getElementById('cont').value="";
+        }
+        function loadText() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".txt";
+    input.onchange = function (event) {
+        processFile(event.target.files[0]);
+    };
+    input.click();
+        }
+        function processFile(file) {
+    const reader = new FileReader();
+    reader.onload = function () {
+        cont.innerText = reader.result;
+        cont.value = reader.result;
+    };
+    reader.readAsText(file,"UTF-8");
+        }
+    </script>
+        <style>
+            *{
+                box-sizing: border-box;
+            }
+            body{
+                background-image: url('../static/space.jpg');
+                width: 100%;
+            }
+            header,main,nav,footer,#context,#answer{
+                font-family: 'Ubuntu', sans-serif;;
+                border: 3px solid;
+                padding: 10px;
+                margin: 5px;
+            }
+            #result{
+                resize: none;
+                height: 50px;
+                width: 98%;
+                border-width: 2px;
+                border-style:inset;
+            }
+            nav,#context{
+                float: left;
+                height: 500px;
+            }
+            #cont{
+                border-width: 2px;
+                border-style:inset;
+                width: 100%;
+                height: 280px;
+                overflow-y: scroll;
+                resize: none;
+            }
+            header{
+                background-color: lightgray;
+                text-align: center;
+            }
+            main{
+                background-color: lightgray;
+                min-height: 700px;
+                overflow-y: scroll;
+            }
+            footer{
+                position: relative;
+                clear: both;
+            }
+            nav{
+                background-color: gray;
+                width: 25%;
+                overflow-y: scroll;
+            }
+            #context{
+                background-color: gray;
+                width: 70.5%;
+            }
+            #answer{
+                background-color:gray;
+                width: 97%;
+                height: 30%;
+                clear: both;
+            }
+            article{
+                clear: both;
+                
+                width: 98%;
+                height: 65%;
+            }
+            #input{
+                
+                border-width: 2px;
+                border-style: inset;
+                float: left;
+                position: relative;
+                bottom: 10px;
+                width: 75%;
+                height: 75px;
+                resize: none;
+            }
+            #warning{
+                float: left;
+                clear:both;
+                position: relative;
+                bottom: 15px;
+                left: 8px;
+            }
+            #submit{
+                float: left;
+                position: relative;
+                top:12px;
+                margin-left: 15px
+            }
+            .btn{
+                display:block;
+                width: 100%; height: 30px;
+                background-color: black;
+                margin: 1px;
+                color: aquamarine;
+                line-height: 30px; text-align: center;
+                cursor: pointer;
+            }
+            button {
+                border: none;
+                padding: 5px 0;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 15px;
+                cursor: pointer;
+            }
+            #submit{
+            width: 80px;
+            background-color: black;
+            color: aquamarine;
+            }
+            #load{
+            width: 80%;
+            background-color:black;
+            color:aquamarine;
+            }
+            #clear{
+            width: 80%;
+            background-color: black;
+            color: aquamarine;
+            margin-bottom: 5px;
+            }
+            .item1, .item2, .item3 {
+                display:none;
+                width: 100%; 
+                height: auto;
+            }
+            .opener1 { display:none;}
+            .opener1:checked ~ .item1 { display:block;}
+            .opener2 { display:none; }
+            .opener2:checked ~ .item2 { display:block;}
+            .opener3 { display:none; }
+            .opener3:checked ~ .item3 { display:block;}
+        </style>
+    </head>
+    <body>
+        <header style="font-family: 'Noto Serif KR', serif;;">
+                <h1>QA service</h1>
+        </header>
+        <main>
+            <h2 style="text-align: center;">
+                <p>Notice</p>
+            </h2>
+            <div style="text-align: center;"><h3>
+                <p><u>The language is English.</u></p>
+                <p><u>Click example to view context and question examples.</u></p>
+                <p><u>The context must have an appropriate length.</u></p>
+                <p><u>The more specific the question, the better.</u></p>
+
+            </h3></div>
+            <nav>
+                <div style="border: 3px solid;">
+                <p style="text-align: center;"><strong>Example context</strong></p>
+                <label class="btn" for="opener1" onclick="openTextFile(1)"">AI Network</label>
+                <input class="opener1" type="checkbox" id="opener1" >
+                    <div class="item1" style="text-align: center;">
+                        <p onclick="questionClick(this.innerText)">What platform is AI Network?</p>
+                        <p onclick="questionClick(this.innerText)">What does AI Network prioritize to achieve its long-term vision?</p>
+                        <p onclick="questionClick(this.innerText)">What is the monetary unit of the AI Network ecosystem called?</p>
+                    </div>
+                <label class="btn" for="opener2" onclick="openTextFile(2)">Olympic</label>
+                <input class="opener2" type="checkbox" id="opener2">
+                <div class="item2" style="text-align: center;">
+                    <p onclick="questionClick(this.innerText)">When was the Olympics held in London?</p>
+                    <p onclick="questionClick(this.innerText)">Where was the first Olympics held?</p>
+                    <p onclick="questionClick(this.innerText)">Who made the Olympic symbol?</p>
+                </div>              
+                <label class="btn" for="opener3" onclick="openTextFile(3)">World War II</label>
+                <input class="opener3" type="checkbox" id="opener3">
+                <div class="item3" style="text-align: center;">
+                        <p onclick="questionClick(this.innerText)">When is World War II considered to have begun?</p>
+                        <p onclick="questionClick(this.innerText)">How many people in total fought in World War II?</p>
+                        <p onclick="questionClick(this.innerText)">When did World War II end?</p>
+                </div>
+                </div>
+                <div style="border: 3px solid; margin-top: 30px;">
+                <p style="text-align: center;"><strong>Local context</strong></p> 
+                <div style="text-align: center;"><button id="load" onclick="loadText()">load</button></div>   
+                <p style="text-align: center;"><strong>Clear all</strong></p>    
+                <div style="text-align: center;"><button id="clear" onclick="clearAll()">Clear</button></div>        
+                </div>
+            </nav>
+            <section id="context">
+                <p style="color: white;"><strong>Context</strong></p>
+                <article>
+                    <div><textarea name="cont" id="cont" type="text">Please write context here.</textarea></div>
+                </article>
+                <p style="color: white;"><strong>Question</strong></p>
+                <div><textarea name="input" id="input" type="text">Please write question here.</textarea></div>
+                <button name="submit" id="submit" type="submit" onclick="send_req()">submit</button>
+                <label id="warning"></label>
+            </section>
+            <section id="answer">
+               <p style="color: white;"><strong>Answer</strong></p>
+               <article>
+                <textarea name="result" id="result" readonly></textarea>
+               </article>
+            </section>
+        </main>
+    </body>
+    <footer style="background-color: lightgray;">
+        <p>model : <a href="https://huggingface.co/xlm-roberta-base">xlm-roberta-base</a> </p>
+        <p>data set : <a href="https://rajpurkar.github.io/SQuAD-explorer/">Squad 2.0</a> </p>
+        <p>huggingface : <a href="https://huggingface.co/seongju/squadv2-xlm-roberta-base">huggingface</a></p>
+        <p>Ainize : <a href="https://ainize.ai/rjdm1324/xlm-roberta-base-squadv2">Ainize</a></p>
+    </footer>
+</html>
