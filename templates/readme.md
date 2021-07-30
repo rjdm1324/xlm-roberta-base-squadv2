@@ -4,9 +4,9 @@ QA service
 [![Run on Ainize](https://ainize.ai/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=https://github.com/rjdm1324/xlm-roberta-base-squadv2)
 ## Overview
 ---
-github : [github](https://github.com/rjdm1324/xlm-roberta-base-squadv2)
-huggingface : [huggingface](https://huggingface.co/seongju/squadv2-xlm-roberta-base)
-workspace : [workspace]()
+- github : [github](https://github.com/rjdm1324/xlm-roberta-base-squadv2)
+- huggingface : [huggingface](https://huggingface.co/seongju/squadv2-xlm-roberta-base)
+- workspace : [workspace](https://ainize.ai/workspace/create?imageId=hnj95592adzr02xPTqss&git=https://github.com/rjdm1324/xlm-roberta-base-squadv2-workspace)
 
 ## How to make
 ----
