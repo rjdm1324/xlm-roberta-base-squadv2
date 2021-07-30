@@ -1,0 +1,70 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: 'QA service'
+servers:
+- url: https://main-xlm-roberta-base-squadv2-rjdm1324.endpoint.ainize.ai
+paths:
+  /generate:
+    post:
+      tags:
+        - request
+      requestBody:
+          description: question, context
+          required: true
+          content:
+            application/form-data:
+              schema:
+                type: object
+                properties:
+                  context:
+                    type: string
+                    description: "context"
+                  question:
+                    type: string
+                    description: "question"
+      responses:
+        '200':
+          description: 출력
+          content:
+            application/json:
+             schema:
+                type: object
+                properties:
+                    answer:
+                      type: string
+                      example: "answer"
+                    end:
+                      type: number
+                      example : "end"
+                    score:
+                      type: number
+                      example : "score"
+                    start:
+                      type: number
+                      example: "start"
+        '400':
+          description: Bad Request Error
+                          
+        '429':
+          description: Too many requests
+                                 
+        '500':
+          description: Server-side Error
+  /queue_clear:
+    get:
+      tags:
+        - request queue clear
+      responses:
+        '200':
+          description: "Clear"
+  /healthz: 
+    get:
+      tags:
+       - healthy check
+      responses:
+        '200':
+          description: "Health"
+      
+                
+                    
