@@ -19,10 +19,21 @@ workspace : [workspace]()
 
 
 endpoint : [ainize](https://main-xlm-roberta-base-squadv2-rjdm1324.endpoint.ainize.ai/)
+- QA service
 1. Fill the context box.
 2. Fill the question box you want to find in context
 3. Click submit button
-4. Use the sample from Sidebar for experience.
+- Example
+1. Select the context example you want.
+2. Select one of the three questions.
+3. Click submit button
+- Load button
+1. You can import the txt file of the local by clicking load button.
+2. Fill the question box you want to find in context
+3. Click submit button
+- Clear button
+1. The question box and the context box are cleared.
+
 
 ## With cli
 ---
